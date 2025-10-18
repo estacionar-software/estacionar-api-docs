@@ -1,0 +1,1085 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Estacionar API</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background-color: #f5f5f5;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #009e2f 0%, #005521 100%);
+            color: white;
+            padding: 50px 30px;
+            margin-bottom: 30px;
+            border-radius: 8px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        header h1 {
+            font-size: 2.8em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        header p {
+            font-size: 1.2em;
+            opacity: 0.95;
+            margin-bottom: 8px;
+        }
+
+        .intro-section {
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            margin-bottom: 30px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .intro-section h2 {
+            color: #2d3748;
+            margin-bottom: 15px;
+            font-size: 1.8em;
+        }
+
+        .intro-section p {
+            color: #4a5568;
+            margin-bottom: 12px;
+            font-size: 1.05em;
+        }
+
+        .intro-section ul {
+            margin-left: 25px;
+            margin-top: 10px;
+        }
+
+        .intro-section li {
+            margin-bottom: 8px;
+            color: #4a5568;
+        }
+
+        .info-box {
+            background: #e6fffa;
+            border-left: 4px solid #319795;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .info-box strong {
+            color: #234e52;
+        }
+
+        .warning-box {
+            background: #fffaf0;
+            border-left: 4px solid #ed8936;
+            padding: 15px;
+            margin: 20px 0;
+            border-radius: 4px;
+        }
+
+        .warning-box strong {
+            color: #7c2d12;
+        }
+
+        .base-url {
+            background: #fff;
+            padding: 20px;
+            border-radius: 6px;
+            margin-bottom: 30px;
+            border-left: 4px solid #667eea;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .base-url strong {
+            color: #667eea;
+            font-size: 1.1em;
+        }
+
+        .base-url code {
+            font-size: 1.05em;
+        }
+
+        .section {
+            background: white;
+            margin-bottom: 25px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+
+        .section-header {
+            background: #f8f9fa;
+            padding: 25px;
+            border-bottom: 2px solid #e9ecef;
+        }
+
+        .section-header h2 {
+            color: #2d3748;
+            font-size: 1.6em;
+        }
+
+        .endpoint {
+            border-bottom: 1px solid #e9ecef;
+        }
+
+        .endpoint:last-child {
+            border-bottom: none;
+        }
+
+        .endpoint-header {
+            padding: 20px;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .endpoint-header:hover {
+            background: #f8f9fa;
+        }
+
+        .endpoint-title {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 8px;
+            flex-wrap: wrap;
+        }
+
+        .method {
+            display: inline-block;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-weight: bold;
+            font-size: 0.85em;
+            text-transform: uppercase;
+            min-width: 65px;
+            text-align: center;
+        }
+
+        .method.post {
+            background: #49cc90;
+            color: white;
+        }
+
+        .method.get {
+            background: #61affe;
+            color: white;
+        }
+
+        .method.put {
+            background: #fca130;
+            color: white;
+        }
+
+        .method.delete {
+            background: #f93e3e;
+            color: white;
+        }
+
+        .endpoint-path {
+            font-family: 'Courier New', monospace;
+            font-size: 1.1em;
+            color: #2d3748;
+            font-weight: 500;
+        }
+
+        .endpoint-description {
+            color: #718096;
+            margin-left: 80px;
+            font-size: 0.95em;
+        }
+
+        .endpoint-content {
+            padding: 0 20px 20px 20px;
+            display: none;
+        }
+
+        .endpoint-content.active {
+            display: block;
+        }
+
+        .content-section {
+            margin-bottom: 25px;
+        }
+
+        .content-section h4 {
+            color: #2d3748;
+            margin-bottom: 12px;
+            font-size: 1.15em;
+            font-weight: 600;
+        }
+
+        .headers-table, .params-table, .response-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+            font-size: 0.95em;
+        }
+
+        .headers-table th, .params-table th, .response-table th {
+            background: #f8f9fa;
+            padding: 12px;
+            text-align: left;
+            border-bottom: 2px solid #e9ecef;
+            font-weight: 600;
+            color: #2d3748;
+        }
+
+        .headers-table td, .params-table td, .response-table td {
+            padding: 12px;
+            border-bottom: 1px solid #e9ecef;
+            vertical-align: top;
+        }
+
+        .required {
+            color: #f93e3e;
+            font-size: 0.85em;
+            font-weight: bold;
+        }
+
+        .optional {
+            color: #718096;
+            font-size: 0.85em;
+        }
+
+        pre {
+            background: #2d3748;
+            color: #f7fafc;
+            padding: 20px;
+            border-radius: 6px;
+            overflow-x: auto;
+            font-size: 0.9em;
+            line-height: 1.5;
+        }
+
+        code {
+            font-family: 'Courier New', monospace;
+        }
+
+        .inline-code {
+            background: #edf2f7;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.9em;
+            color: #2d3748;
+        }
+
+        .toggle-icon {
+            margin-left: auto;
+            transition: transform 0.3s;
+            color: #718096;
+        }
+
+        .toggle-icon.active {
+            transform: rotate(180deg);
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 3px;
+            font-size: 0.75em;
+            font-weight: bold;
+        }
+
+        .badge.auth {
+            background: #ffd700;
+            color: #2d3748;
+        }
+
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 15px;
+            border-radius: 4px;
+        }
+
+        .note strong {
+            color: #856404;
+        }
+
+        .status-codes {
+            margin-top: 15px;
+        }
+
+        .status-code {
+            display: inline-block;
+            padding: 4px 8px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 0.85em;
+            font-weight: bold;
+            margin-right: 10px;
+            margin-bottom: 5px;
+        }
+
+        .status-200 {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-201 {
+            background: #c6f6d5;
+            color: #22543d;
+        }
+
+        .status-204 {
+            background: #e6fffa;
+            color: #234e52;
+        }
+
+        .status-400 {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-401 {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-403 {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-404 {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        .status-406 {
+            background: #feebc8;
+            color: #7c2d12;
+        }
+
+        .status-500 {
+            background: #fed7d7;
+            color: #742a2a;
+        }
+
+        @media print {
+            body {
+                background: white;
+            }
+            .endpoint-content {
+                display: block !important;
+            }
+            .toggle-icon {
+                display: none;
+            }
+        }
+
+        @media (max-width: 768px) {
+            header h1 {
+                font-size: 2em;
+            }
+            .endpoint-description {
+                margin-left: 0;
+                margin-top: 8px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Estacionar API</h1>
+            <p>Documentação para Rotas</p>
+            <p style="font-size: 0.95em; opacity: 0.9;">Sistema de Gerenciamento Inteligente de Estacionamento.</p>
+        </header>
+
+        <!-- Introduction Section -->
+        <div class="intro-section">
+            <h2>Sobre o Estacionar</h2>
+            <p>
+                O Estacionar é uma plataforma completa de gerenciamento de Estacionamento.
+                O sistema oferece suporte a múltiplos clientes em uma arquitetura multi-tenant, garantindo isolamento total de dados entre clientes.
+            </p>
+
+            <h3 style="margin-top: 25px; margin-bottom: 12px; color: #2d3748;">Características Principais</h3>
+            <ul>
+                <li><strong>Gravação em Nuvem:</strong> Armazenamento seguro dos dados.</li>
+                <li><strong>Multi-Tenant:</strong> Cada cliente opera de forma independente com seus próprios clientes e dados</li>
+                <li><strong>Gestão de Carros:</strong> Cadastro e gerenciamento completo de Carros estacionados</li>
+                <li><strong>Cadastro de serviços adicionais:</strong> Ideal para adicionar serviços a mais para os clientes finais.</li>
+                <li><strong>Emissão de cupom:</strong> Emissão do cupom fiscal sobre o serviço prestado pelo estacionamento.</li>
+                <li><strong>Calculo do valor total:</strong> Veja o valor e o tempo total do veiculo estacionado.</li>
+            </ul>
+
+            <div class="info-box">
+                <strong>Isolamento de Dados:</strong> Como cliente, você terá acesso apenas aos seus próprios dados.
+                Todos os endpoints retornam automaticamente apenas os registros relacionados ao seus dados. Não é possível visualizar ou acessar dados de outros estacionamentos.
+            </div>
+
+            <div class="warning-box">
+                <strong>Autenticação:</strong> A maioria dos endpoints requer autenticação via token JWT obtido no endpoint de login.
+                O token deve ser incluído no header <code class="inline-code">Authorization: Bearer {token}</code> em todas as requisições autenticadas.
+            </div>
+        </div>
+
+        <!-- <div class="base-url">
+            <strong>Base URL de Produção:</strong> <code>https://api.estacionar.com.br</code>
+        </div> -->
+
+        <div class="section">
+    <div class="section-header">
+        <h2>Carros</h2>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+            <div class="endpoint-title">
+                <span class="method post">POST</span>
+                <span class="endpoint-path">/carros</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="endpoint-description">Cadastrar um novo carro (Registrar entrada)</div>
+        </div>
+        <div class="endpoint-content">
+            <div class="content-section">
+                <h4>Headers</h4>
+                <table class="headers-table">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>Accept</code></td>
+                        <td><code>application/json</code></td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>Content-Type</code></td>
+                        <td><code>application/json</code></td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Parâmetros do Body (JSON)</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>license_plate</code></td>
+                        <td>string</td>
+                        <td>Placa do veículo (ex: FHH8346)</td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>model</code></td>
+                        <td>string</td>
+                        <td>Modelo do veículo (ex: Ford Ka)</td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>locale</code></td>
+                        <td>string</td>
+                        <td>Localização da vaga (ex: Subsolo 2, Vaga 12)</td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Exemplo de Request (cURL)</h4>
+                <pre><code>curl --request POST \
+  --url https://api.estacionar.com/carros \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "license_plate": "fhh8346",
+    "model": "Ford Ka",
+    "locale": "Subsolo 2, Vaga 12"
+}'</code></pre>
+            </div>
+
+            <div class="content-section">
+                <h4>Resposta de Sucesso</h4>
+                <div class="status-codes">
+                    <span class="status-code status-200">200 OK</span>
+                </div>
+                <pre><code>{
+  "carro": {
+    "created_at": "2025-10-18T15:04:19.509111",
+    "id": "cb7edbf7-763d-450b-bea0-9ed0eb7608a6",
+    "license_plate": "FHH8346",
+    "locale": "Subsolo 2, Vaga 12",
+    "model": "Ford Ka",
+    "parked": true
+  },
+  "mensagem": "Carro cadastrado com sucesso!"
+}</code></pre>
+            </div>
+
+            <div class="content-section">
+                <h4>Campos da Resposta</h4>
+                <table class="response-table">
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                    </tr>
+                    <tr>
+                        <td><code>carro</code></td>
+                        <td>object</td>
+                        <td>Objeto contendo os dados do carro recém-cadastrado.</td>
+                    </tr>
+                    <tr>
+                        <td><code>carro.id</code></td>
+                        <td>UUID</td>
+                        <td>ID único do registro de estacionamento.</td>
+                    </tr>
+                    <tr>
+                        <td><code>carro.created_at</code></td>
+                        <td>string</td>
+                        <td>Data e hora da entrada (ISO 8601).</td>
+                    </tr>
+                    <tr>
+                        <td><code>carro.license_plate</code></td>
+                        <td>string</td>
+                        <td>Placa do veículo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>carro.model</code></td>
+                        <td>string</td>
+                        <td>Modelo do veículo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>carro.locale</code></td>
+                        <td>string</td>
+                        <td>Localização da vaga.</td>
+                    </tr>
+                    <tr>
+                        <td><code>carro.parked</code></td>
+                        <td>boolean</td>
+                        <td>Status de estacionado (<code>true</code> para entrada).</td>
+                    </tr>
+                    <tr>
+                        <td><code>mensagem</code></td>
+                        <td>string</td>
+                        <td>Mensagem de confirmação.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Possíveis Erros</h4>
+                <div class="status-codes">
+                    <span class="status-code status-400">400 Bad Request</span>
+                </div>
+                <pre><code>{
+  "mensagem": "Carro já cadastrado!"
+}</code></pre>
+            </div>
+
+            <div class="note">
+                <strong>Uso:</strong> Este endpoint registra a entrada de um novo veículo no estacionamento. O status <code>parked</code> será definido como <code>true</code>.
+            </div>
+        </div>
+    </div>
+
+    <div class="endpoint">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+            <div class="endpoint-title">
+                <span class="method get">GET</span>
+                <span class="endpoint-path">/carros</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="endpoint-description">Listar carros estacionados ou buscar por placa</div>
+        </div>
+        <div class="endpoint-content">
+            <div class="content-section">
+                <h4>Headers</h4>
+                <table class="headers-table">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>Accept</code></td>
+                        <td><code>application/json</code></td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="content-section">
+                <h4>Parâmetros de Query String (Filtros e Paginação)</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>Exemplo</th>
+                    </tr>
+                    <tr>
+                        <td><code>placa</code></td>
+                        <td>string</td>
+                        <td>Filtrar por uma placa específica. Se fornecido, retorna um único objeto de carro.</td>
+                        <td>?placa=FHH8346</td>
+                    </tr>
+                    <tr>
+                        <td><code>page</code></td>
+                        <td>integer</td>
+                        <td>Número da página para paginação.</td>
+                        <td>?page=1</td>
+                    </tr>
+                    <tr>
+                        <td><code>limit</code></td>
+                        <td>integer</td>
+                        <td>Número de registros por página.</td>
+                        <td>?limit=10</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Exemplo de Request (Listagem)</h4>
+                <pre><code>curl --request GET \
+  --url https://api.estacionar.com/carros?page=1&limit=2 \
+  --header 'Accept: application/json'</code></pre>
+            </div>
+
+            <div class="content-section">
+                <h4>Resposta de Sucesso (Listagem)</h4>
+                <div class="status-codes">
+                    <span class="status-code status-200">200 OK</span>
+                </div>
+                <pre><code>{
+  "carros": [
+    {
+      "created_at": "Fri, 17 Oct 2025 20:40:07 GMT",
+      "id": "be625a6a-0c0a-49e9-8094-25df2e673603",
+      "license_plate": "mat2k25",
+      "locale": "VAGA 2",
+      "model": "Volkswagen Virtus",
+      "parked": 1
+    },
+    {
+      "created_at": "Sat, 18 Oct 2025 15:04:20 GMT",
+      "id": "cb7edbf7-763d-450b-bea0-9ed0eb7608a6",
+      "license_plate": "FHH8346",
+      "locale": "Subsolo 2, Vaga 12",
+      "model": "Ford Ka",
+      "parked": 1
+    }
+  ],
+  "limite": 10,
+  "pagina": 1,
+  "total": 2
+}</code></pre>
+            </div>
+
+            <div class="content-section">
+                <h4>Resposta de Sucesso (Busca por Placa)</h4>
+                <div class="status-codes">
+                    <span class="status-code status-200">200 OK</span>
+                </div>
+                <pre><code>{
+  "created_at": "2025-10-18T15:04:20",
+  "id": "cb7edbf7-763d-450b-bea0-9ed0eb7608a6",
+  "license_plate": "FHH8346",
+  "locale": "Subsolo 2, Vaga 12",
+  "model": "Ford Ka",
+  "parked": 1
+}</code></pre>
+            </div>
+
+            <div class="note">
+                <strong>Uso:</strong> Este endpoint retorna uma lista paginada de carros. Se o parâmetro <code>placa</code> for fornecido na query string, a API retornará apenas o objeto do carro específico.
+            </div>
+        </div>
+    </div>
+    
+    <div class="endpoint">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+            <div class="endpoint-title">
+                <span class="method put">PUT</span>
+                <span class="endpoint-path">/carros/{placa}</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="endpoint-description">Atualizar dados de um carro estacionado</div>
+        </div>
+        <div class="endpoint-content">
+            <div class="content-section">
+                <h4>Parâmetros de URL</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>placa</code></td>
+                        <td>string</td>
+                        <td>Placa do veículo a ser atualizado.</td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Headers</h4>
+                <table class="headers-table">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>Accept</code></td>
+                        <td><code>application/json</code></td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>Content-Type</code></td>
+                        <td><code>application/json</code></td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="content-section">
+                <h4>Parâmetros do Body (JSON)</h4>
+                <p>Envie apenas os campos que deseja atualizar. Campos vazios ou não enviados não serão alterados.</p>
+                <table class="params-table">
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>license_plate</code></td>
+                        <td>string</td>
+                        <td>Nova placa do veículo.</td>
+                        <td><span class="optional">Opcional</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>model</code></td>
+                        <td>string</td>
+                        <td>Novo modelo do veículo.</td>
+                        <td><span class="optional">Opcional</span></td>
+                    </tr>
+                    <tr>
+                        <td><code>locale</code></td>
+                        <td>string</td>
+                        <td>Nova localização (vaga) do veículo.</td>
+                        <td><span class="optional">Opcional</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Exemplo de Request (cURL)</h4>
+                <pre><code>curl --request PUT \
+  --url https://api.estacionar.com/carros/MAT2K25 \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "license_plate": "",
+    "model": "",
+    "locale": "VAGA 2"
+}'</code></pre>
+            </div>
+
+            <div class="content-section">
+                <h4>Resposta de Sucesso</h4>
+                <div class="status-codes">
+                    <span class="status-code status-200">200 OK</span>
+                </div>
+                <pre><code>{
+  "carro": {
+    "created_at": "2025-10-17T20:40:07",
+    "id": "be625a6a-0c0a-49e9-8094-25df2e673603",
+    "license_plate": "MAT2K25",
+    "locale": "VAGA 2",
+    "model": "Volkswagen Virtus",
+    "parked": 1
+  },
+  "message": "Veiculo atualizado com sucesso."
+}</code></pre>
+            </div>
+            
+            <div class="content-section">
+                <h4>Possíveis Erros</h4>
+                <div class="status-codes">
+                    <span class="status-code status-404">404 Not Found</span>
+                </div>
+                <pre><code>{
+  "mensagem": "Carro não encontrado"
+}</code></pre>
+            </div>
+
+            <div class="note">
+                <strong>Uso:</strong> Permite a atualização de dados de um carro enquanto ele está estacionado, como corrigir a placa, modelo ou mudar a vaga.
+            </div>
+        </div>
+    </div>
+    
+    <div class="endpoint">
+        <div class="endpoint-header" onclick="toggleEndpoint(this)">
+            <div class="endpoint-title">
+                <span class="method delete">DELETE</span>
+                <span class="endpoint-path">/carros/{placa}</span>
+                <span class="toggle-icon">▼</span>
+            </div>
+            <div class="endpoint-description">Registrar saída de um carro (Checkout)</div>
+        </div>
+        <div class="endpoint-content">
+            <div class="content-section">
+                <h4>Parâmetros de URL</h4>
+                <table class="params-table">
+                    <tr>
+                        <th>Parâmetro</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>placa</code></td>
+                        <td>string</td>
+                        <td>Placa do veículo que está saindo.</td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                </table>
+            </div>
+        
+            <div class="content-section">
+                <h4>Headers</h4>
+                <table class="headers-table">
+                    <tr>
+                        <th>Nome</th>
+                        <th>Valor</th>
+                        <th>Obrigatório</th>
+                    </tr>
+                    <tr>
+                        <td><code>Accept</code></td>
+                        <td><code>application/json</code></td>
+                        <td><span class="required">SIM</span></td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Exemplo de Request (cURL)</h4>
+                <pre><code>curl --request DELETE \
+  --url https://api.estacionar.com/carros/FHH8346 \
+  --header 'Accept: application/json'</code></pre>
+            </div>
+
+            <div class="content-section">
+                <h4>Resposta de Sucesso</h4>
+                <div class="status-codes">
+                    <span class="status-code status-200">200 OK</span>
+                </div>
+                <pre><code>{
+  "data": {
+    "created_at": "2025-10-18T15:04:20",
+    "exit_hour": "Sat, 18 Oct 2025 15:07:17 GMT",
+    "id": "cb7edbf7-763d-450b-bea0-9ed0eb7608a6",
+    "license_plate": "FHH8346",
+    "locale": "Subsolo 2, Vaga 12",
+    "model": "Ford Ka",
+    "parked": 1,
+    "total_price": 7,
+    "total_time": "2 minutos"
+  },
+  "message": "Veiculo excluído com sucesso."
+}</code></pre>
+            </div>
+            
+            <div class="content-section">
+                <h4>Campos da Resposta</h4>
+                <table class="response-table">
+                    <tr>
+                        <th>Campo</th>
+                        <th>Tipo</th>
+                        <th>Descrição</th>
+                    </tr>
+                    <tr>
+                        <td><code>data</code></td>
+                        <td>object</td>
+                        <td>Objeto contendo os detalhes do "checkout" do veículo.</td>
+                    </tr>
+                    <tr>
+                        <td><code>data.exit_hour</code></td>
+                        <td>string</td>
+                        <td>Data e hora da saída.</td>
+                    </tr>
+                    <tr>
+                        <td><code>data.total_price</code></td>
+                        <td>number</td>
+                        <td>Valor total a ser pago.</td>
+                    </tr>
+                    <tr>
+                        <td><code>data.total_time</code></td>
+                        <td>string</td>
+                        <td>Tempo total de permanência.</td>
+                    </tr>
+                    <tr>
+                        <td><code>message</code></td>
+                        <td>string</td>
+                        <td>Mensagem de confirmação da saída.</td>
+                    </tr>
+                </table>
+            </div>
+
+            <div class="content-section">
+                <h4>Possíveis Erros</h4>
+                <div class="status-codes">
+                    <span class="status-code status-404">404 Not Found</span>
+                </div>
+                <pre><code>{
+  "mensagem": "Carro não encontrado"
+}</code></pre>
+            </div>
+
+            <div class="note">
+                <strong>Importante:</strong> Este endpoint não apenas deleta o registro, ele executa a lógica de "checkout": calcula o tempo de permanência, o preço total, e marca o veículo como não estacionado (<code>parked: false</code>), retornando os detalhes da cobrança.
+            </div>
+        </div>
+    </div>
+</div>
+        
+        <!-- Footer with additional info -->
+        <div class="intro-section" style="margin-top: 40px;">
+            <h2>Códigos de Status HTTP</h2>
+            <table class="response-table">
+                <tr>
+                    <th>Código</th>
+                    <th>Significado</th>
+                    <th>Descrição</th>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-200">200</span></td>
+                    <td>OK</td>
+                    <td>Requisição bem-sucedida</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-201">201</span></td>
+                    <td>Created</td>
+                    <td>Recurso criado com sucesso</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-204">204</span></td>
+                    <td>No Content</td>
+                    <td>Requisição bem-sucedida sem conteúdo de retorno</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-400">400</span></td>
+                    <td>Bad Request</td>
+                    <td>Requisição inválida ou malformada</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-401">401</span></td>
+                    <td>Unauthorized</td>
+                    <td>Credenciais inválidas ou token ausente</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-403">403</span></td>
+                    <td>Forbidden</td>
+                    <td>Acesso negado ao recurso solicitado</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-404">404</span></td>
+                    <td>Not Found</td>
+                    <td>Recurso não encontrado</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-406">406</span></td>
+                    <td>Not Acceptable</td>
+                    <td>Erro de validação nos dados enviados</td>
+                </tr>
+                <tr>
+                    <td><span class="status-code status-500">500</span></td>
+                    <td>Internal Server Error</td>
+                    <td>Erro interno do servidor</td>
+                </tr>
+            </table>
+
+            <h2 style="margin-top: 40px;">Boas Práticas</h2>
+            <ul>
+                <li><strong>Sempre inclua o header Accept:</strong> <code>application/json</code> em todas as requisições</li>
+                <li><strong>Guarde o token de forma segura:</strong> Nunca exponha o token JWT em logs ou repositórios públicos</li>
+                <li><strong>Valide os dados antes de enviar:</strong> Isso reduz erros de validação e melhora a performance</li>
+                <li><strong>Use paginação adequada:</strong> Para listas grandes, utilize o header <code>page</code> e <code>limit</code> com valor apropriado</li>
+                <li><strong>Trate os erros adequadamente:</strong> Sempre verifique o código de status HTTP e os detalhes de erro retornados</li>
+                <li><strong>Implemente retry logic:</strong> Para falhas temporárias (500, timeouts), implemente tentativas automáticas</li>
+                <li><strong>Monitore a expiração do token:</strong> O token JWT expira em 365 dias. Implemente renovação automática quando necessário</li>
+            </ul>
+
+            <div class="info-box" style="margin-top: 20px;">
+                <strong>Suporte Técnico:</strong> Para dúvidas, problemas ou sugestões relacionadas à integração,
+                entre em contato com a equipe técnica do <strong>Estacionar</strong> através dos canais de suporte fornecidos.
+            </div>
+        </div>
+
+        <footer style="text-align: center; padding: 40px 20px; color: #718096; border-top: 1px solid #e9ecef; margin-top: 40px;">
+            <p style="font-weight: 600; font-size: 1.1em; color: #2d3748;">Estacionar API - Documentação v1.0</p>
+            <p style="font-size: 0.95em; margin-top: 10px;">Sistema de Gerenciamento Inteligente de Estacionamento.</p>
+            <p style="font-size: 0.9em; margin-top: 15px; opacity: 0.8;">
+                Última atualização: Outubro 2025 | Flask  3.1.2 | Python 3.13
+            </p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleEndpoint(header) {
+            const content = header.nextElementSibling;
+            const icon = header.querySelector('.toggle-icon');
+
+            content.classList.toggle('active');
+            icon.classList.toggle('active');
+        }
+
+        // Auto-expand first endpoint of each section on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const firstEndpoints = document.querySelectorAll('.section .endpoint:first-child .endpoint-header');
+            firstEndpoints.forEach(header => {
+                toggleEndpoint(header);
+            });
+        });
+
+        // Add keyboard navigation
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.endpoint-content.active').forEach(content => {
+                    content.classList.remove('active');
+                    const icon = content.previousElementSibling.querySelector('.toggle-icon');
+                    if (icon) icon.classList.remove('active');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
