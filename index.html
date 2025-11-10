@@ -408,7 +408,6 @@
             <p style="font-size: 0.95em; opacity: 0.9;">Sistema de Gerenciamento Inteligente de Estacionamento.</p>
         </header>
 
-        <!-- Introduction Section -->
         <div class="intro-section">
             <h2>Sobre o Estacionar</h2>
             <p>
@@ -436,10 +435,6 @@
                 O token deve ser incluído no header <code class="inline-code">Authorization: Bearer {token}</code> em todas as requisições autenticadas.
             </div>
         </div>
-
-        <!-- <div class="base-url">
-            <strong>Base URL de Produção:</strong> <code>https://api.estacionar.com.br</code>
-        </div> -->
 
         <div class="section">
     <div class="section-header">
@@ -873,7 +868,7 @@
                     </tr>
                 </table>
             </div>
-        
+            
             <div class="content-section">
                 <h4>Headers</h4>
                 <table class="headers-table">
@@ -970,8 +965,837 @@
         </div>
     </div>
 </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Logs de Carros</h2>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/cars-logs</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Listar logs de carros que já saíram (histórico)</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="content-section">
+                        <h4>Parâmetros de Query String (Filtros e Paginação)</h4>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Exemplo</th>
+                            </tr>
+                            <tr>
+                                <td><code>placa</code></td>
+                                <td>string</td>
+                                <td>Filtrar histórico por uma placa específica. Se fornecido, retorna uma lista.</td>
+                                <td>?placa=FHH8346</td>
+                            </tr>
+                            <tr>
+                                <td><code>page</code></td>
+                                <td>integer</td>
+                                <td>Número da página para paginação.</td>
+                                <td>?page=1</td>
+                            </tr>
+                            <tr>
+                                <td><code>limit</code></td>
+                                <td>integer</td>
+                                <td>Número de registros por página.</td>
+                                <td>?limit=10</td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Exemplo de Request (Listagem)</h4>
+                        <pre><code>curl --request GET \
+  --url https://api.estacionar.com/cars-logs?page=1&limit=2 \
+  --header 'Accept: application/json'</code></pre>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso (Listagem)</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-200">200 OK</span>
+                        </div>
+                        <pre><code>{
+  "logs": [
+    {
+      "created_at": "2025-10-18T15:04:20",
+      "exit_hour": "Sat, 18 Oct 2025 15:07:17 GMT",
+      "id": "cb7edbf7-763d-450b-bea0-9ed0eb7608a6",
+      "license_plate": "FHH8346",
+      "locale": "Subsolo 2, Vaga 12",
+      "model": "Ford Ka",
+      "parked": 0,
+      "total_price": 7,
+      "total_time": "2 minutos"
+    }
+  ],
+  "limite": 10,
+  "pagina": 1,
+  "total": 1
+}</code></pre>
+                    </div>
+                    <div class="note">
+                        <strong>Uso:</strong> Retorna um histórico paginado de todos os veículos que já registraram saída (checkout).
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Configuração de Preços</h2>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/price-parking</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Criar configuração de preços</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>Content-Type</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Parâmetros do Body (JSON)</h4>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>parking_hours</code></td>
+                                <td>integer</td>
+                                <td>Horas máximas de estacionamento (ex: 3).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>quick_stop_price</code></td>
+                                <td>number</td>
+                                <td>Valor da parada rápida (ex: 5).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>until_time_price</code></td>
+                                <td>number</td>
+                                <td>Valor cobrado até o limite de <code>parking_hours</code> (ex: 13).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>extra_hour_price</code></td>
+                                <td>number</td>
+                                <td>Valor da hora adicional (recorrência de 1 hora).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>quick_stop_limit_minutes</code></td>
+                                <td>integer</td>
+                                <td>Minutos limite para parada rápida (ex: 15).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request POST \
+  --url https://api.estacionar.com/price-parking \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "parking_hours": 3,
+    "quick_stop_price": 5,
+    "until_time_price": 13,
+    "extra_hour_price": 4,
+    "quick_stop_limit_minutes": 15
+}'</code></pre>
+            </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-201">201 Created</span>
+                        </div>
+                        <pre><code>{
+  "message": "Preço criado com sucesso!",
+  "price_config": {
+    "id": "uuid-price-config-123",
+    "parking_hours": 3,
+    "quick_stop_price": 5,
+    "until_time_price": 13,
+    "extra_hour_price": 4,
+    "quick_stop_limit_minutes": 15
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/price-parking</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Recuperar configuração de preços</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request GET \
+  --url https://api.estacionar.com/price-parking \
+  --header 'Accept: application/json'</code></pre>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-200">200 OK</span>
+                        </div>
+                        <pre><code>{
+  "id": "uuid-price-config-123",
+  "parking_hours": 3,
+  "quick_stop_price": 5,
+  "until_time_price": 13,
+  "extra_hour_price": 4,
+  "quick_stop_limit_minutes": 15
+}</code></pre>
+                    </div>
+                    <div class="note">
+                        <strong>Uso:</strong> Retorna a configuração de preços ativa no momento.
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method put">PUT</span>
+                        <span class="endpoint-path">/price-parking</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Atualizar configuração de preços</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>Content-Type</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="content-section">
+                        <h4>Parâmetros do Body (JSON)</h4>
+                        <p>Envie apenas os campos que deseja atualizar.</p>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>parking_hours</code></td>
+                                <td>integer</td>
+                                <td>Horas máximas de estacionamento.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>quick_stop_price</code></td>
+                                <td>number</td>
+                                <td>Valor da parada rápida.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>until_time_price</code></td>
+                                <td>number</td>
+                                <td>Valor cobrado até o limite de horas.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>extra_hour_price</code></td>
+                                <td>number</td>
+                                <td>Valor da hora adicional.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>quick_stop_limit_minutes</code></td>
+                                <td>integer</td>
+                                <td>Minutos limite para parada rápida.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request PUT \
+  --url https://api.estacionar.com/price-parking \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "until_time_price": 15,
+    "extra_hour_price": 5
+}'</code></pre>
+            </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-200">200 OK</span>
+                        </div>
+                        <pre><code>{
+  "message": "Preço atualizado com sucesso!",
+  "price_config": {
+    "id": "uuid-price-config-123",
+    "parking_hours": 3,
+    "quick_stop_price": 5,
+    "until_time_price": 15,
+    "extra_hour_price": 5,
+    "quick_stop_limit_minutes": 15
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method delete">DELETE</span>
+                        <span class="endpoint-path">/price-parking</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Deletar configuração de preços</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request DELETE \
+  --url https://api.estacionar.com/price-parking \
+  --header 'Accept: application/json'</code></pre>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-200">200 OK</span>
+                        </div>
+                        <pre><code>{
+  "message": "Configuração de preço deletada com sucesso."
+}</code></pre>
+                    </div>
+                    <div class="note">
+                        <strong>Uso:</strong> Deleta a configuração de preços atual.
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="section">
+            <div class="section-header">
+                <h2>Produtos e Serviços</h2>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method post">POST</span>
+                        <span class="endpoint-path">/products</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Cadastrar novo produto ou serviço</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>Content-Type</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Parâmetros do Body (JSON)</h4>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>title</code></td>
+                                <td>string</td>
+                                <td>Título do produto/serviço (ex: Lavagem Completa).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>description</code></td>
+                                <td>string</td>
+                                <td>Descrição detalhada.</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>amount</code></td>
+                                <td>integer</td>
+                                <td>Quantidade em estoque (para produtos).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>price</code></td>
+                                <td>number</td>
+                                <td>Preço unitário (ex: 50).</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>type</code></td>
+                                <td>string</td>
+                                <td>Tipo: "service" ou "product".</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request POST \
+  --url https://api.estacionar.com/products \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "title": "Lavagem Completa",
+    "description": "Lavagem externa e interna.",
+    "amount": 1,
+    "price": 50,
+    "type": "service"
+}'</code></pre>
+            </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-201">201 Created</span>
+                        </div>
+                        <pre><code>{
+  "message": "Produto/Serviço criado com sucesso!",
+  "product": {
+    "id": "a1b2c3d4-e5f6-7890-abcd-ef1234567890",
+    "title": "Lavagem Completa",
+    "description": "Lavagem externa e interna.",
+    "amount": 1,
+    "price": 50,
+    "type": "service"
+  }
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method get">GET</span>
+                        <span class="endpoint-path">/products</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Listar todos os produtos e serviços</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Parâmetros de Query String (Paginação)</h4>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Exemplo</th>
+                            </tr>
+                            <tr>
+                                <td><code>page</code></td>
+                                <td>integer</td>
+                                <td>Número da página para paginação.</td>
+                                <td>?page=1</td>
+                            </tr>
+                            <tr>
+                                <td><code>limit</code></td>
+                                <td>integer</td>
+                                <td>Número de registros por página.</td>
+                                <td>?limit=10</td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request GET \
+  --url https://api.estacionar.com/products \
+  --header 'Accept: application/json'</code></pre>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-200">200 OK</span>
+                        </div>
+                        <pre><code>{
+  "products": [
+    {
+      "id": "a1b2c3d4-...",
+      "title": "Lavagem Completa",
+      "description": "Lavagem externa e interna.",
+      "amount": 1,
+      "price": 50,
+      "type": "service"
+    },
+    {
+      "id": "e5f6g7h8-...",
+      "title": "Água Mineral",
+      "description": "Garrafa 500ml",
+      "amount": 50,
+      "price": 3,
+      "type": "product"
+    }
+  ],
+  "limite": 10,
+  "pagina": 1,
+  "total": 2
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method put">PUT</span>
+                        <span class="endpoint-path">/products/{id}</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Atualizar um produto ou serviço</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Parâmetros de URL</h4>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>id</code></td>
+                                <td>string</td>
+                                <td>ID (UUID) do produto/serviço a ser atualizado.</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>Content-Type</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+                    
+                    <div class="content-section">
+                        <h4>Parâmetros do Body (JSON)</h4>
+                        <p>Envie apenas os campos que deseja atualizar.</p>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>title</code></td>
+                                <td>string</td>
+                                <td>Novo título.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>description</code></td>
+                                <td>string</td>
+                                <td>Nova descrição.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>amount</code></td>
+                                <td>integer</td>
+                                <td>Nova quantidade.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>price</code></td>
+                                <td>number</td>
+                                <td>Novo preço.</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                            <tr>
+                                <td><code>type</code></td>
+                                <td>string</td>
+                                <td>Novo tipo ("service" ou "product").</td>
+                                <td><span class="optional">Opcional</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request PUT \
+  --url https://api.estacionar.com/products/a1b2c3d4-... \
+  --header 'Accept: application/json' \
+  --header 'Content-Type: application/json' \
+  --data '{
+    "price": 55,
+    "amount": 10
+}'</code></pre>
+            </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-200">200 OK</span>
+                        </div>
+                        <pre><code>{
+  "message": "Produto atualizado com sucesso.",
+  "product": {
+    "id": "a1b2c3d4-...",
+    "title": "Lavagem Completa",
+    "description": "Lavagem externa e interna.",
+    "amount": 10,
+    "price": 55,
+    "type": "service"
+  }
+}</code></pre>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Possíveis Erros</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-404">404 Not Found</span>
+                        </div>
+                        <pre><code>{
+  "mensagem": "Produto não encontrado"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="endpoint">
+                <div class="endpoint-header" onclick="toggleEndpoint(this)">
+                    <div class="endpoint-title">
+                        <span class="method delete">DELETE</span>
+                        <span class="endpoint-path">/products/{id}</span>
+                        <span class="toggle-icon">▼</span>
+                    </div>
+                    <div class="endpoint-description">Deletar um produto ou serviço</div>
+                </div>
+                <div class="endpoint-content">
+                    <div class="content-section">
+                        <h4>Parâmetros de URL</h4>
+                        <table class="params-table">
+                            <tr>
+                                <th>Parâmetro</th>
+                                <th>Tipo</th>
+                                <th>Descrição</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>id</code></td>
+                                <td>string</td>
+                                <td>ID (UUID) do produto/serviço a ser deletado.</td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Headers</h4>
+                        <table class="headers-table">
+                            <tr>
+                                <th>Nome</th>
+                                <th>Valor</th>
+                                <th>Obrigatório</th>
+                            </tr>
+                            <tr>
+                                <td><code>Accept</code></td>
+                                <td><code>application/json</code></td>
+                                <td><span class="required">SIM</span></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Exemplo de Request (cURL)</h4>
+                        <pre><code>curl --request DELETE \
+  --url https://api.estacionar.com/products/a1b2c3d4-... \
+  --header 'Accept: application/json'</code></pre>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Resposta de Sucesso</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-200">200 OK</span>
+                        </div>
+                        <pre><code>{
+  "message": "Produto deletado com sucesso."
+}</code></pre>
+                    </div>
+
+                    <div class="content-section">
+                        <h4>Possíveis Erros</h4>
+                        <div class="status-codes">
+                            <span class="status-code status-404">404 Not Found</span>
+                        </div>
+                        <pre><code>{
+  "mensagem": "Produto não encontrado"
+}</code></pre>
+                    </div>
+                </div>
+            </div>
+        </div>
         
-        <!-- Footer with additional info -->
         <div class="intro-section" style="margin-top: 40px;">
             <h2>Códigos de Status HTTP</h2>
             <table class="response-table">
@@ -1045,10 +1869,10 @@
         </div>
 
         <footer style="text-align: center; padding: 40px 20px; color: #718096; border-top: 1px solid #e9ecef; margin-top: 40px;">
-            <p style="font-weight: 600; font-size: 1.1em; color: #2d3748;">Estacionar API - Documentação v1.0</p>
+            <p style="font-weight: 600; font-size: 1.1em; color: #2d3748;">Estacionar API - Documentação v1.1</p>
             <p style="font-size: 0.95em; margin-top: 10px;">Sistema de Gerenciamento Inteligente de Estacionamento.</p>
             <p style="font-size: 0.9em; margin-top: 15px; opacity: 0.8;">
-                Última atualização: Outubro 2025 | Flask  3.1.2 | Python 3.13
+                Última atualização: Novembro 2025 | Flask  3.1.2 | Python 3.13
             </p>
         </footer>
     </div>
