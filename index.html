@@ -445,7 +445,7 @@
         <div class="endpoint-header" onclick="toggleEndpoint(this)">
             <div class="endpoint-title">
                 <span class="method post">POST</span>
-                <span class="endpoint-path">/carros</span>
+                <span class="endpoint-path">/vehicles</span>
                 <span class="toggle-icon">▼</span>
             </div>
             <div class="endpoint-description">Cadastrar um novo carro (Registrar entrada)</div>
@@ -505,7 +505,7 @@
             <div class="content-section">
                 <h4>Exemplo de Request (cURL)</h4>
                 <pre><code>curl --request POST \
-  --url https://api.estacionar.com/carros \
+  --url https://api.estacionar.com/vehicles \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -604,7 +604,7 @@
         <div class="endpoint-header" onclick="toggleEndpoint(this)">
             <div class="endpoint-title">
                 <span class="method get">GET</span>
-                <span class="endpoint-path">/carros</span>
+                <span class="endpoint-path">/vehicles</span>
                 <span class="toggle-icon">▼</span>
             </div>
             <div class="endpoint-description">Listar carros estacionados ou buscar por placa</div>
@@ -636,10 +636,10 @@
                         <th>Exemplo</th>
                     </tr>
                     <tr>
-                        <td><code>placa</code></td>
+                        <td><code>plate</code></td>
                         <td>string</td>
                         <td>Filtrar por uma placa específica. Se fornecido, retorna um único objeto de carro.</td>
-                        <td>?placa=FHH8346</td>
+                        <td>?plate=FHH8346</td>
                     </tr>
                     <tr>
                         <td><code>page</code></td>
@@ -653,13 +653,19 @@
                         <td>Número de registros por página.</td>
                         <td>?limit=10</td>
                     </tr>
+                    <tr>
+                        <td><code>order</code></td>
+                        <td>string</td>
+                        <td>Ordem da listagem (ex: ASC ou DESC). Padrão: DESC.</td>
+                        <td>?order=DESC</td>
+                    </tr>
                 </table>
             </div>
 
             <div class="content-section">
                 <h4>Exemplo de Request (Listagem)</h4>
                 <pre><code>curl --request GET \
-  --url https://api.estacionar.com/carros?page=1&limit=2 \
+  --url "https://api.estacionar.com/vehicles?page=1&limit=2&order=DESC" \
   --header 'Accept: application/json'</code></pre>
             </div>
 
@@ -709,7 +715,7 @@
             </div>
 
             <div class="note">
-                <strong>Uso:</strong> Este endpoint retorna uma lista paginada de carros. Se o parâmetro <code>placa</code> for fornecido na query string, a API retornará apenas o objeto do carro específico.
+                <strong>Uso:</strong> Este endpoint retorna uma lista paginada de carros. Se o parâmetro <code>plate</code> for fornecido na query string, a API retornará apenas o objeto do carro específico.
             </div>
         </div>
     </div>
@@ -718,7 +724,7 @@
         <div class="endpoint-header" onclick="toggleEndpoint(this)">
             <div class="endpoint-title">
                 <span class="method put">PUT</span>
-                <span class="endpoint-path">/carros/{placa}</span>
+                <span class="endpoint-path">/vehicles/{plate}</span>
                 <span class="toggle-icon">▼</span>
             </div>
             <div class="endpoint-description">Atualizar dados de um carro estacionado</div>
@@ -734,7 +740,7 @@
                         <th>Obrigatório</th>
                     </tr>
                     <tr>
-                        <td><code>placa</code></td>
+                        <td><code>plate</code></td>
                         <td>string</td>
                         <td>Placa do veículo a ser atualizado.</td>
                         <td><span class="required">SIM</span></td>
@@ -797,7 +803,7 @@
             <div class="content-section">
                 <h4>Exemplo de Request (cURL)</h4>
                 <pre><code>curl --request PUT \
-  --url https://api.estacionar.com/carros/MAT2K25 \
+  --url https://api.estacionar.com/vehicles/MAT2K25 \
   --header 'Accept: application/json' \
   --header 'Content-Type: application/json' \
   --data '{
@@ -845,7 +851,7 @@
         <div class="endpoint-header" onclick="toggleEndpoint(this)">
             <div class="endpoint-title">
                 <span class="method delete">DELETE</span>
-                <span class="endpoint-path">/carros/{placa}</span>
+                <span class="endpoint-path">/vehicles/{plate}</span>
                 <span class="toggle-icon">▼</span>
             </div>
             <div class="endpoint-description">Registrar saída de um carro (Checkout)</div>
@@ -861,7 +867,7 @@
                         <th>Obrigatório</th>
                     </tr>
                     <tr>
-                        <td><code>placa</code></td>
+                        <td><code>plate</code></td>
                         <td>string</td>
                         <td>Placa do veículo que está saindo.</td>
                         <td><span class="required">SIM</span></td>
@@ -888,7 +894,7 @@
             <div class="content-section">
                 <h4>Exemplo de Request (cURL)</h4>
                 <pre><code>curl --request DELETE \
-  --url https://api.estacionar.com/carros/FHH8346 \
+  --url https://api.estacionar.com/vehicles/FHH8346 \
   --header 'Accept: application/json'</code></pre>
             </div>
 
@@ -975,7 +981,7 @@
                 <div class="endpoint-header" onclick="toggleEndpoint(this)">
                     <div class="endpoint-title">
                         <span class="method get">GET</span>
-                        <span class="endpoint-path">/cars-logs</span>
+                        <span class="endpoint-path">/vehicles-logs</span>
                         <span class="toggle-icon">▼</span>
                     </div>
                     <div class="endpoint-description">Listar logs de carros que já saíram (histórico)</div>
@@ -1007,10 +1013,10 @@
                                 <th>Exemplo</th>
                             </tr>
                             <tr>
-                                <td><code>placa</code></td>
+                                <td><code>plate</code></td>
                                 <td>string</td>
                                 <td>Filtrar histórico por uma placa específica. Se fornecido, retorna uma lista.</td>
-                                <td>?placa=FHH8346</td>
+                                <td>?plate=FHH8346</td>
                             </tr>
                             <tr>
                                 <td><code>page</code></td>
@@ -1024,13 +1030,19 @@
                                 <td>Número de registros por página.</td>
                                 <td>?limit=10</td>
                             </tr>
+                            <tr>
+                                <td><code>order</code></td>
+                                <td>string</td>
+                                <td>Ordem da listagem (ex: ASC ou DESC). Padrão: DESC.</td>
+                                <td>?order=DESC</td>
+                            </tr>
                         </table>
                     </div>
 
                     <div class="content-section">
                         <h4>Exemplo de Request (Listagem)</h4>
                         <pre><code>curl --request GET \
-  --url https://api.estacionar.com/cars-logs?page=1&limit=2 \
+  --url "https://api.estacionar.com/vehicles-logs?page=1&limit=2&order=DESC" \
   --header 'Accept: application/json'</code></pre>
                     </div>
 
@@ -1869,10 +1881,10 @@
         </div>
 
         <footer style="text-align: center; padding: 40px 20px; color: #718096; border-top: 1px solid #e9ecef; margin-top: 40px;">
-            <p style="font-weight: 600; font-size: 1.1em; color: #2d3748;">Estacionar API - Documentação v1.1</p>
+            <p style="font-weight: 600; font-size: 1.1em; color: #2d3748;">Estacionar API - Documentação v1.2</p>
             <p style="font-size: 0.95em; margin-top: 10px;">Sistema de Gerenciamento Inteligente de Estacionamento.</p>
             <p style="font-size: 0.9em; margin-top: 15px; opacity: 0.8;">
-                Última atualização: Novembro 2025 | Flask  3.1.2 | Python 3.13
+                Última atualização: Fevereiro 2026 | Flask  3.1.2 | Python 3.13
             </p>
         </footer>
     </div>
